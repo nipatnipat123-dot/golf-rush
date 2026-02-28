@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOLF-Rush | สุ่มไอเทมเกมสุดพรีเมียม</title>
+    <title>GOLF-Rush | Admin System</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,6 +15,7 @@
             --accent-yellow: #f1c40f;
             --accent-blue: #3498db;
             --card-bg: rgba(44, 0, 62, 0.6);
+            --admin-red: #e74c3c;
         }
 
         body {
@@ -49,75 +50,61 @@
         .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
         .main-banner { width: 100%; border-radius: 15px; border: 3px solid var(--primary-purple); box-shadow: 0 0 20px rgba(142, 68, 173, 0.5); }
         
+        /* --- Admin Badge --- */
+        #adminBadge { display: none; background: var(--admin-red); color: white; padding: 2px 10px; border-radius: 5px; font-size: 0.8rem; margin-left: 10px; }
+
         /* --- Buttons --- */
         .btn-auth { border: none; color: white; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-family: 'Kanit'; font-weight: bold; transition: 0.3s; margin-left: 10px; }
         .btn-login { background: var(--accent-green); }
-        .btn-register { background: var(--accent-blue); }
         .btn-buy { background: var(--primary-purple); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-buy:hover { background: var(--accent-yellow); color: black; }
+        .btn-admin { background: var(--admin-red); display: none; }
 
         .section-title { margin-top: 40px; border-left: 5px solid var(--accent-yellow); padding-left: 15px; font-size: 1.5rem; }
 
-        /* --- Product Grid --- */
+        /* --- Product & Gacha --- */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
-        .product-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(142, 68, 173, 0.3);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: 0.3s;
-        }
+        .product-card { background: var(--card-bg); border: 1px solid rgba(142, 68, 173, 0.3); border-radius: 15px; overflow: hidden; transition: 0.3s; }
         .product-card:hover { transform: translateY(-10px); border-color: var(--accent-yellow); }
         .product-img { width: 100%; height: 180px; object-fit: cover; }
         .product-info { padding: 15px; }
         .product-price { color: var(--accent-yellow); font-size: 1.2rem; font-weight: bold; }
 
-        /* --- Random System --- */
-        .random-container {
-            background: linear-gradient(135deg, var(--dark-purple), var(--bg-dark));
-            border-radius: 20px;
-            padding: 40px; margin-top: 30px; text-align: center; border: 2px dashed var(--primary-purple);
-        }
+        .random-container { background: linear-gradient(135deg, var(--dark-purple), var(--bg-dark)); border-radius: 20px; padding: 40px; margin-top: 30px; text-align: center; border: 2px dashed var(--primary-purple); }
         .random-box-display { width: 150px; height: 150px; margin: 0 auto 20px; background: url('https://cdn-icons-png.flaticon.com/512/3081/3081840.png') no-repeat center; background-size: contain; }
         .shake { animation: shake 0.5s infinite; }
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-3px, 0px) rotate(1deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-3px, 0px) rotate(1deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
 
-        /* --- Modals & Table --- */
+        /* --- Modals --- */
         .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
-        .modal-content { background-color: var(--dark-purple); margin: 5% auto; padding: 30px; border: 2px solid var(--primary-purple); width: 90%; max-width: 600px; border-radius: 20px; position: relative; }
+        .modal-content { background-color: var(--dark-purple); margin: 5% auto; padding: 30px; border: 2px solid var(--primary-purple); width: 90%; max-width: 500px; border-radius: 20px; position: relative; }
         .close { position: absolute; right: 20px; top: 15px; color: #aaa; font-size: 28px; cursor: pointer; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; color: white; font-size: 0.9rem; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        th { background-color: rgba(142, 68, 173, 0.3); color: var(--accent-yellow); }
-        .status-success { color: var(--accent-green); font-weight: bold; }
-
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; color: white; font-size: 0.8rem; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
         .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--primary-purple); background: #1a0026; color: white; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo"><strong>GOLF-Rush</strong></div>
+        <div class="logo"><strong>GOLF-Rush</strong> <span id="adminBadge">ADMIN MODE</span></div>
         <div style="display: flex; align-items: center;">
             <div class="user-balance">คงเหลือ: <span id="balance">0.00</span> ฿</div>
             <div class="nav-links">
                 <a href="#">หน้าแรก</a>
                 <a href="javascript:void(0)" onclick="openModal('topupModal')" style="color: var(--accent-yellow);">เติมเงิน</a>
-                <a href="javascript:void(0)" onclick="openModal('historyModal')">ประวัติการซื้อ</a>
-                <button class="btn-auth btn-login" onclick="openModal('loginModal')">เข้าสู่ระบบ</button>
+                <a href="javascript:void(0)" onclick="openModal('historyModal')">ประวัติ</a>
+                <button id="adminBtn" class="btn-auth btn-admin" onclick="openModal('adminPanelModal')">แผงควบคุม</button>
+                <button id="loginNavBtn" class="btn-auth btn-login" onclick="openModal('loginModal')">เข้าสู่ระบบ</button>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <img src="c:\Users\WINDOWS 11 PRO\Downloads\Gemini_Generated_Image_p3t8wnp3t8wnp3t8.png" alt="Banner" class="main-banner">
+        <img src="https://via.placeholder.com/1200x400/8e44ad/ffffff?text=GOLF-RUSH+BANNER" alt="Banner" class="main-banner">
 
         <div class="section-title">ระบบสุ่มกล่องปริศนา (Gacha)</div>
         <div class="random-container">
@@ -141,115 +128,107 @@
         </div>
     </div>
 
-    <div id="historyModal" class="modal">
+    <div id="loginModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('historyModal')">&times;</span>
-            <h2 style="text-align: center; color: var(--accent-yellow);">📜 ประวัติการซื้อของฉัน</h2>
-            <div style="max-height: 400px; overflow-y: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>สินค้า</th>
-                            <th>ราคา</th>
-                            <th>วันที่/เวลา</th>
-                            <th>สถานะ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historyTableBody">
-                        </tbody>
-                </table>
-                <div id="noHistory" style="text-align: center; margin-top: 20px; color: #ccc;">ยังไม่มีประวัติการซื้อ</div>
-            </div>
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2 style="text-align:center;">เข้าสู่ระบบ</h2>
+            <div class="form-group"><input type="text" id="userInp" placeholder="Username (แอดมินใช้: admin)"></div>
+            <div class="form-group"><input type="password" id="passInp" placeholder="Password (แอดมินใช้: 1234)"></div>
+            <button class="btn-buy" onclick="handleLogin()">Login</button>
         </div>
     </div>
 
-    <div id="topupModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('topupModal')">&times;</span>
-            <h2 style="text-align: center; color: var(--accent-yellow);">เติมเงินผ่านซองของขวัญ</h2>
+    <div id="adminPanelModal" class="modal">
+        <div class="modal-content" style="border-color: var(--admin-red);">
+            <span class="close" onclick="closeModal('adminPanelModal')">&times;</span>
+            <h2 style="text-align: center; color: var(--admin-red);">🛠 แผงควบคุมแอดมิน</h2>
             <div class="form-group">
-                <label>ลิงก์ซองของขวัญ (TrueMoney Wallet)</label>
-                <input type="text" id="giftLink" placeholder="https://gift.truemoney.com/...">
+                <label>เพิ่มยอดเงินทางลัด (฿)</label>
+                <input type="number" id="adminAddCash" placeholder="ใส่จำนวนเงิน">
             </div>
-            <button class="btn-buy" onclick="processTopup()">ยืนยันการเติมเงิน</button>
+            <button class="btn-buy" style="background:var(--accent-green);" onclick="adminAddMoney()">เพิ่มเงินทันที</button>
+            <hr style="margin: 20px 0; border: 0.5px solid #444;">
+            <button class="btn-buy" style="background:var(--admin-red);" onclick="location.reload()">ออกจากระบบ/รีเซ็ต</button>
         </div>
     </div>
 
-    <div id="loginModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('loginModal')">&times;</span><h2>เข้าสู่ระบบ</h2><form><div class="form-group"><input type="text" placeholder="Username"></div><div class="form-group"><input type="password" placeholder="Password"></div><button type="submit" class="btn-buy">Login</button></form></div></div>
+    <div id="historyModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('historyModal')">&times;</span><h2>📜 ประวัติการซื้อ</h2><table><thead><tr><th>สินค้า</th><th>ราคา</th><th>เวลา</th></tr></thead><tbody id="historyTableBody"></tbody></table></div></div>
+    <div id="topupModal" class="modal"><div class="modal-content"><span class="close" onclick="closeModal('topupModal')">&times;</span><h2>เติมเงิน</h2><div class="form-group"><input type="text" id="giftLink" placeholder="ลิงก์ซองของขวัญ"></div><button class="btn-buy" onclick="processTopup()">เติมเงิน</button></div></div>
 
     <script>
         let currentBalance = 0.00;
         let purchaseHistory = [];
+        let isAdmin = false;
 
         function updateUI() {
             document.getElementById('balance').innerText = currentBalance.toFixed(2);
-        }
-
-        // ฟังก์ชันบันทึกประวัติ
-        function addHistory(name, price) {
-            const now = new Date();
-            const timeString = now.toLocaleDateString() + " " + now.toLocaleTimeString();
-            purchaseHistory.unshift({ name, price, time: timeString }); // เพิ่มไว้บนสุด
-            renderHistory();
-        }
-
-        function renderHistory() {
-            const tableBody = document.getElementById('historyTableBody');
-            const noHistory = document.getElementById('noHistory');
-            
-            if (purchaseHistory.length > 0) {
-                noHistory.style.display = "none";
-                tableBody.innerHTML = purchaseHistory.map(item => `
-                    <tr>
-                        <td>${item.name}</td>
-                        <td>${item.price.toFixed(2)} ฿</td>
-                        <td>${item.time}</td>
-                        <td class="status-success">สำเร็จ</td>
-                    </tr>
-                `).join('');
+            if(isAdmin) {
+                document.getElementById('adminBadge').style.display = "inline-block";
+                document.getElementById('adminBtn').style.display = "inline-block";
             }
         }
 
+        // ระบบ Login
+        function handleLogin() {
+            const u = document.getElementById('userInp').value;
+            const p = document.getElementById('passInp').value;
+
+            if(u === "admin" && p === "1234") {
+                isAdmin = true;
+                alert("ยินดีต้อนรับท่านแอดมิน!");
+                closeModal('loginModal');
+                document.getElementById('loginNavBtn').innerText = "Logged in: " + u;
+                updateUI();
+            } else {
+                alert("เข้าสู่ระบบสำเร็จ (User ทั่วไป)");
+                closeModal('loginModal');
+                document.getElementById('loginNavBtn').innerText = "User: " + u;
+            }
+        }
+
+        // ฟังก์ชัน Admin
+        function adminAddMoney() {
+            const amt = parseFloat(document.getElementById('adminAddCash').value);
+            if(amt > 0) {
+                currentBalance += amt;
+                updateUI();
+                alert("แอดมินเติมเงินสำเร็จ: " + amt + " ฿");
+            }
+        }
+
+        // ระบบเดิม
+        function addHistory(name, price) {
+            const now = new Date();
+            purchaseHistory.unshift({ name, price, time: now.toLocaleTimeString() });
+            const tableBody = document.getElementById('historyTableBody');
+            tableBody.innerHTML = purchaseHistory.map(item => `<tr><td>${item.name}</td><td>${item.price}</td><td>${item.time}</td></tr>`).join('');
+        }
+
         function processTopup() {
-            const link = document.getElementById('giftLink').value;
-            if (link.includes("gift.truemoney.com")) {
-                alert("กำลังตรวจสอบซอง...");
-                setTimeout(() => {
-                    currentBalance += 10000;
-                    updateUI();
-                    alert("เติมเงินสำเร็จ 10000 บาท!");
-                    closeModal('topupModal');
-                }, 1500);
-            } else { alert("ลิงก์ไม่ถูกต้อง"); }
+            if (document.getElementById('giftLink').value.includes("gift.truemoney.com")) {
+                currentBalance += 100; updateUI(); alert("เติมเงินสำเร็จ!"); closeModal('topupModal');
+            }
         }
 
         function startRandom() {
             if (currentBalance < 50) { alert("เงินไม่พอ!"); return; }
-            currentBalance -= 50;
-            updateUI();
-            
-            const box = document.getElementById('boxDisplay');
-            box.classList.add('shake');
-            
+            currentBalance -= 50; updateUI();
+            document.getElementById('boxDisplay').classList.add('shake');
             setTimeout(() => {
-                box.classList.remove('shake');
-                const prize = "ไอดี Level Max (สุ่มได้)";
-                document.getElementById('randomResult').innerText = "ยินดีด้วย! คุณได้รับ: " + prize;
-                addHistory("สุ่มกาชา: " + prize, 50);
-            }, 2000);
+                document.getElementById('boxDisplay').classList.remove('shake');
+                const p = "ไอดีสุ่มระดับ S";
+                document.getElementById('randomResult').innerText = "ได้รับ: " + p;
+                addHistory("สุ่ม: " + p, 50);
+            }, 1000);
         }
 
         function buyItem(name, price) {
             if (currentBalance < price) { alert("เงินไม่พอ!"); return; }
-            currentBalance -= price;
-            updateUI();
-            addHistory(name, price);
-            alert("ซื้อสำเร็จ!");
+            currentBalance -= price; updateUI(); addHistory(name, price); alert("ซื้อสำเร็จ!");
         }
 
         function openModal(id) { document.getElementById(id).style.display = "block"; }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
     </script>
-
 </body>
 </html>
